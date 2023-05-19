@@ -1,4 +1,4 @@
-import { withoutBase, withoutTrailingSlash } from 'ufo'
+import { withoutBase, withoutTrailingSlash } from 'url-ops'
 import type { EventHandler } from '../types'
 import { eventHandler } from '../event'
 
