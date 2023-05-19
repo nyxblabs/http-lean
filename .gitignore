@@ -1,0 +1,7 @@
+node_modules
+*.log*
+dist
+coverage
+.profile
+.idea
+.eslintcache
