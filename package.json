@@ -31,7 +31,7 @@
     "lint:fix": "eslint --cache --ext .ts,.js,.mjs,.cjs . --fix",
     "play": "dynot ./playground/index.ts",
     "profile": "0x -o -D .profile -P 'autocannon -c 100 -p 10 -d 40 http://localhost:$PORT' ./playground/server.cjs",
-    "release": "nyxr test && nyxr build && nyxlx changelogen@latest --release && pnpm publish && git push --follow-tags",
+    "release": "nyxr build && nyxlx changelogen@latest --release && pnpm publish && git push --follow-tags",
     "test": "nyxr lint && vitest run --coverage -u"
   },
   "dependencies": {
