@@ -1,5 +1,12 @@
 {
   "extends": ["@nyxb"],
   "rules": {
+    "n/prefer-global/buffer": 0,
+    "@next/next/no-html-link-for-page": 0
+  },
+  "settings": {
+    "react": {
+      "version": "18"
+    }
   }
 }
