@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.0.3
+
+[compare changes](https://github.com/nyxblabs/http-lean/compare/v0.0.2...v0.0.3)
+
+
+### 🩹 Fixes
+
+  - **utils/cache.ts): fix typo in import statement 🚨 fix(utils/cors/handler.ts): fix typo in import statement 🚨 fix(utils/proxy.ts): fix typo in import statement 🚨 fix(utils/request.ts:** Fix typo in import statement The changes in this commit fix typos in import statements in four different files. The import statements were referring to a non-existent type, which caused errors when trying to use the imported types. ([8f989df](https://github.com/nyxblabs/http-lean/commit/8f989df))
+
+### ❤️  Contributors
+
+- Nyxb <contact@nyxb.xyz>
+
 ## v0.0.2
 
 
