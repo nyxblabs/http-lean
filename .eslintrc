@@ -2,7 +2,7 @@
   "extends": ["@nyxb"],
   "rules": {
     "n/prefer-global/buffer": 0,
-    "@next/next/no-html-link-for-page": 0
+    "@next/next/no-html-link-for-pages": 0
   },
   "settings": {
     "react": {

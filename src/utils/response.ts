@@ -1,14 +1,14 @@
 import type { OutgoingMessage } from 'node:http'
 import type { Socket } from 'node:net'
 import { createError } from '../error'
-import type { LEANEvent } from '../event'
+import type { LeanEvent } from '../event'
 import { MIMES } from './consts'
 import { sanitizeStatusCode, sanitizeStatusMessage } from './sanitize'
 
 const defer
   = typeof setImmediate !== 'undefined' ? setImmediate : (fn: () => any) => fn()
 
-export function send(event: LEANEvent, data?: any, type?: string): Promise<void> {
+export function send(event: LeanEvent, data?: any, type?: string): Promise<void> {
    if (type)
       defaultContentType(event, type)
 
@@ -27,7 +27,7 @@ export function send(event: LEANEvent, data?: any, type?: string): Promise<void>
  * @param event http-lean event
  * @param code status code to be send. By default, it is `204 No Content`.
  */
-export function sendNoContent(event: LEANEvent, code = 204) {
+export function sendNoContent(event: LeanEvent, code = 204) {
    event.node.res.statusCode = sanitizeStatusCode(code, 204)
    // 204 responses MUST NOT have a Content-Length header field (https://www.rfc-editor.org/rfc/rfc7230#section-3.3.2)
    if (event.node.res.statusCode === 204)
@@ -37,7 +37,7 @@ export function sendNoContent(event: LEANEvent, code = 204) {
 }
 
 export function setResponseStatus(
-   event: LEANEvent,
+   event: LeanEvent,
    code?: number,
    text?: string,
 ): void {
@@ -51,20 +51,20 @@ export function setResponseStatus(
       event.node.res.statusMessage = sanitizeStatusMessage(text)
 }
 
-export function getResponseStatus(event: LEANEvent): number {
+export function getResponseStatus(event: LeanEvent): number {
    return event.node.res.statusCode
 }
 
-export function getResponseStatusText(event: LEANEvent): string {
+export function getResponseStatusText(event: LeanEvent): string {
    return event.node.res.statusMessage
 }
 
-export function defaultContentType(event: LEANEvent, type?: string) {
+export function defaultContentType(event: LeanEvent, type?: string) {
    if (type && !event.node.res.getHeader('content-type'))
       event.node.res.setHeader('content-type', type)
 }
 
-export function sendRedirect(event: LEANEvent, location: string, code = 302) {
+export function sendRedirect(event: LeanEvent, location: string, code = 302) {
    event.node.res.statusCode = sanitizeStatusCode(
       code,
       event.node.res.statusCode,
@@ -76,20 +76,20 @@ export function sendRedirect(event: LEANEvent, location: string, code = 302) {
 }
 
 export function getResponseHeaders(
-   event: LEANEvent,
-): ReturnType<LEANEvent['res']['getHeaders']> {
+   event: LeanEvent,
+): ReturnType<LeanEvent['res']['getHeaders']> {
    return event.node.res.getHeaders()
 }
 
 export function getResponseHeader(
-   event: LEANEvent,
+   event: LeanEvent,
    name: string,
-): ReturnType<LEANEvent['res']['getHeader']> {
+): ReturnType<LeanEvent['node']['res']['getHeader']> {
    return event.node.res.getHeader(name)
 }
 
 export function setResponseHeaders(
-   event: LEANEvent,
+   event: LeanEvent,
    headers: Record<string, Parameters<OutgoingMessage['setHeader']>[1]>,
 ): void {
    for (const [name, value] of Object.entries(headers))
@@ -99,7 +99,7 @@ export function setResponseHeaders(
 export const setHeaders = setResponseHeaders
 
 export function setResponseHeader(
-   event: LEANEvent,
+   event: LeanEvent,
    name: string,
    value: Parameters<OutgoingMessage['setHeader']>[1],
 ): void {
@@ -109,7 +109,7 @@ export function setResponseHeader(
 export const setHeader = setResponseHeader
 
 export function appendResponseHeaders(
-   event: LEANEvent,
+   event: LeanEvent,
    headers: Record<string, string>,
 ): void {
    for (const [name, value] of Object.entries(headers))
@@ -119,7 +119,7 @@ export function appendResponseHeaders(
 export const appendHeaders = appendResponseHeaders
 
 export function appendResponseHeader(
-   event: LEANEvent,
+   event: LeanEvent,
    name: string,
    value: string,
 ): void {
@@ -147,7 +147,7 @@ export function isStream(data: any) {
    )
 }
 
-export function sendStream(event: LEANEvent, data: any): Promise<void> {
+export function sendStream(event: LeanEvent, data: any): Promise<void> {
    return new Promise((resolve, reject) => {
       data.pipe(event.node.res)
       data.on('end', () => resolve())
@@ -157,7 +157,7 @@ export function sendStream(event: LEANEvent, data: any): Promise<void> {
 
 function noop() {}
 export function writeEarlyHints(
-   event: LEANEvent,
+   event: LeanEvent,
    hints: string | string[] | Record<string, string | string[]>,
    cb: () => void = noop,
 ) {
@@ -172,13 +172,9 @@ export function writeEarlyHints(
 
    if (hints.link)
       hints.link = Array.isArray(hints.link) ? hints.link : hints.link.split(',')
-   // TODO: remove when https://github.com/nodejs/node/pull/44874 is released
-   // hints.link = hints.link.map(l => l.trim().replace(/; crossorigin/g, ''))
 
-   // TODO: Enable when node 18 api is stable
-   // if ('writeEarlyHints' in event.node.res) {
-   //   return event.node.res.writeEarlyHints(hints, cb)
-   // }
+   if ('writeEarlyHints' in event.node.res)
+      return event.node.res.writeEarlyHints(hints, cb)
 
    const headers: [string, string | string[]][] = Object.entries(hints).map(
       e => [e[0].toLowerCase(), e[1]],
@@ -198,6 +194,7 @@ export function writeEarlyHints(
 
       hint += `\r\n${header}: ${value}`
    }
+   // @ts-expect-error is fine
    if (event.node.res.socket) {
       (event.node.res as { socket: Socket }).socket.write(
       `${hint}\r\n\r\n`,
