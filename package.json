@@ -1,6 +1,6 @@
 {
   "name": "http-lean",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "✨ Tiny JavaScript Server 🌐",
   "author": "Dennis Ollhoff <contact@nyxb.xyz>",
   "license": "MIT",
