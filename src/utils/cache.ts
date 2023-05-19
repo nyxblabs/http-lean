@@ -1,4 +1,4 @@
-import type { LEANEvent } from '../event'
+import type { LeanEvent } from '../event'
 
 export interface CacheConditions {
    modifiedTime?: string | Date
@@ -13,7 +13,7 @@ export interface CacheConditions {
  * @returns `true` when cache headers are matching. When `true` is returned, no reponse should be sent anymore
  */
 export function handleCacheHeaders(
-   event: LEANEvent,
+   event: LeanEvent,
    opts: CacheConditions,
 ): boolean {
    const cacheControls = ['public', ...(opts.cacheControls || [])]

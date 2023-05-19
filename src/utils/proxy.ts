@@ -1,5 +1,5 @@
-import type { LEANEvent } from '../event'
-import type { LEANEventContext, RequestHeaders } from '../types'
+import type { LeanEvent } from '../event'
+import type { LeanEventContext, RequestHeaders } from '../types'
 import { getMethod, getRequestHeaders } from './request'
 import { readRawBody } from './body'
 import { splitCookiesString } from './cookie'
@@ -25,7 +25,7 @@ const ignoredHeaders = new Set([
 ])
 
 export async function proxyRequest(
-   event: LEANEvent,
+   event: LeanEvent,
    target: string,
    opts: ProxyOptions = {},
 ) {
@@ -57,7 +57,7 @@ export async function proxyRequest(
 }
 
 export async function sendProxy(
-   event: LEANEvent,
+   event: LeanEvent,
    target: string,
    opts: ProxyOptions = {},
 ) {
@@ -120,7 +120,7 @@ export async function sendProxy(
    return event.node.res.end()
 }
 
-export function getProxyRequestHeaders(event: LEANEvent) {
+export function getProxyRequestHeaders(event: LeanEvent) {
    const headers = Object.create(null)
    const reqHeaders = getRequestHeaders(event)
    for (const name in reqHeaders) {
@@ -131,9 +131,9 @@ export function getProxyRequestHeaders(event: LEANEvent) {
 }
 
 export function fetchWithEvent(
-   event: LEANEvent,
+   event: LeanEvent,
    req: RequestInfo | URL,
-   init?: RequestInit & { context?: LEANEventContext },
+   init?: RequestInit & { context?: LeanEventContext },
    options?: { fetch: typeof fetch },
 ) {
    return _getFetch(options?.fetch)(req, <RequestInit>{

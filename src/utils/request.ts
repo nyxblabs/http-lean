@@ -1,35 +1,35 @@
 import { getQuery as _getQuery } from 'url-ops'
 import { createError } from '../error'
 import type { HTTPMethod, RequestHeaders } from '../types'
-import type { LEANEvent } from '../event'
+import type { LeanEvent } from '../event'
 
-export function getQuery(event: LEANEvent) {
+export function getQuery(event: LeanEvent) {
    return _getQuery(event.node.req.url || '')
 }
 
-export function getRouterParams(event: LEANEvent): LEANEvent['context'] {
+export function getRouterParams(event: LeanEvent): LeanEvent['context'] {
    // Fallback object needs to be returned in case router is not used (#149)
    return event.context.params || {}
 }
 
 export function getRouterParam(
-   event: LEANEvent,
+   event: LeanEvent,
    name: string,
-): LEANEvent['context'][string] {
+): LeanEvent['context'][string] {
    const params = getRouterParams(event)
 
    return params[name]
 }
 
 export function getMethod(
-   event: LEANEvent,
+   event: LeanEvent,
    defaultMethod: HTTPMethod = 'GET',
 ): HTTPMethod {
    return (event.node.req.method || defaultMethod).toUpperCase() as HTTPMethod
 }
 
 export function isMethod(
-   event: LEANEvent,
+   event: LeanEvent,
    expected: HTTPMethod | HTTPMethod[],
    allowHead?: boolean,
 ) {
@@ -50,7 +50,7 @@ export function isMethod(
 }
 
 export function assertMethod(
-   event: LEANEvent,
+   event: LeanEvent,
    expected: HTTPMethod | HTTPMethod[],
    allowHead?: boolean,
 ) {
@@ -62,7 +62,7 @@ export function assertMethod(
    }
 }
 
-export function getRequestHeaders(event: LEANEvent): RequestHeaders {
+export function getRequestHeaders(event: LeanEvent): RequestHeaders {
    const _headers: RequestHeaders = {}
    for (const key in event.node.req.headers) {
       const val = event.node.req.headers[key]
@@ -74,7 +74,7 @@ export function getRequestHeaders(event: LEANEvent): RequestHeaders {
 export const getHeaders = getRequestHeaders
 
 export function getRequestHeader(
-   event: LEANEvent,
+   event: LeanEvent,
    name: string,
 ): RequestHeaders[string] {
    const headers = getRequestHeaders(event)
@@ -85,7 +85,7 @@ export function getRequestHeader(
 export const getHeader = getRequestHeader
 
 export function getRequestHost(
-   event: LEANEvent,
+   event: LeanEvent,
    opts: { xForwardedHost?: boolean } = {},
 ) {
    if (opts.xForwardedHost) {
@@ -97,7 +97,7 @@ export function getRequestHost(
 }
 
 export function getRequestProtocol(
-   event: LEANEvent,
+   event: LeanEvent,
    opts: { xForwardedProto?: boolean } = {},
 ) {
    if (
@@ -111,13 +111,13 @@ export function getRequestProtocol(
 
 const DOUBLE_SLASH_RE = /[/\\]{2,}/g
 
-export function getRequestPath(event: LEANEvent): string {
+export function getRequestPath(event: LeanEvent): string {
    const path = (event.node.req.url || '/').replace(DOUBLE_SLASH_RE, '/')
    return path
 }
 
 export function getRequestURL(
-   event: LEANEvent,
+   event: LeanEvent,
    opts: { xForwardedHost?: boolean; xForwardedProto?: boolean } = {},
 ) {
    const host = getRequestHost(event, opts)

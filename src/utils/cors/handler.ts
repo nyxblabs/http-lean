@@ -1,4 +1,4 @@
-import type { LEANEvent } from '../../event'
+import type { LeanEvent } from '../../event'
 import { sendNoContent } from '../response'
 import {
    appendCorsHeaders,
@@ -8,7 +8,7 @@ import {
 } from './utils'
 import type { LeanCorsOptions } from './types'
 
-export function handleCors(event: LEANEvent, options: LeanCorsOptions): boolean {
+export function handleCors(event: LeanEvent, options: LeanCorsOptions): boolean {
    const _options = resolveCorsOptions(options)
    if (isPreflightRequest(event)) {
       appendCorsPreflightHeaders(event, options)
